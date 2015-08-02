@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Загрузка данных в PostGIS</title>
+
+<xmp theme="united" style="display:none;">
+
+Существует множество различных способов загрузки данных в БД PostGIS.
+Это можно сделать из настольного приложения (например, QGIS), можно
+воспользоваться штатной PostGIS-утилитой shp2pgsql (для загрузки *.shp файлов).
+Вариант загрузки данных с помощью shp2pgsql описан в статье
+[Основы работы с PostGIS](http://gis-lab.info/qa/postgis-work.html).
+
+Мы же воспользуемся более универсальным инструментом -
+[ogr2ogr](http://www.gdal.org/ogr2ogr.html).
+ogr2ogr - это утилита, предназначнная для конвертации векторных данных между
+различными форматами. Список поддерживаемых форматов доступен [здесь](http://www.gdal.org/ogr/ogr_formats.html).
+Примеры использования утилиты ogr2ogr можно найти в [статье](http://gis-lab.info/qa/ogr2ogr-examples.html).
+
+Загрузку данных лучше осуществлять с того же хоста, на котором
+расположена база данных, так как объем загружаемых данных
+может быть достаточно велик и выполнение данной операции с удалённого
+хоста может занять продолжительное время.
+
+Установка ogr2ogr
+-----------------
+
+Установим ogr2ogr на наш сервер. Воспользуемся инсталлятором
+[OSGeo4W](http://trac.osgeo.org/osgeo4w/). Перейдите на сайт
+и скачайте установщик, соответствующий вашей ОС. Запустите инсталлятор,
+выберите *Расширенная установка &#10139; Установить из интернет*. В
+открывшемся списке отметьте пакет *Libs &#10139; gdal* (текущая
+версия 1.11.2) и установите его (зависимости не отключать).
+
+Установка 7z
+------------
+
+Перейдите на [сайт](http://www.7-zip.org/) и скачайте установщик,
+соответствующий вашей ОС. После чего добавьте путь
+`C:\Program Files\7-Zip` в переменную окружения `Path`.
+
+
+Загрузка данных в PostGIS
+-------------------------
+
+Запустите OSGeo4W Shell (ярлык на рабочем столе или в меню *Пуск*).
+
+
+Загрузим в нашу базу 4 слоя на территорию г. Москва, построенных на основе данных
+[OpenStreetMap](http://openstreetmap.org/). Данные OpenStreetMap,
+в формате *.shp, которые мы будем загружать в PostGIS
+можно получить на странице следующего [проекта](http://gis-lab.info/projects/osm_shp.html).
+
+* **Водоёмы**, 1896 объектов
+* **Здания**, 192471 объектов
+* **Дорожная сеть**, 169527 объектов
+* **Железнодорожные станции**, 1306 объектов
+
+
+Скачиваем и распаковываем данные:
+
+    C:\>mkdir %userprofile%\tmpdata
+    C:\>cd %userprofile%\tmpdata
+    C:\Users\dr\tmpdata>curl -O http://be.gis-lab.info/data/osmshp/latest/RU-MOW.7z
+    C:\Users\dr\tmpdata>7z x RU-MOW.7z
+    C:\Users\dr\tmpdata>cd data
+
+Загружаем данные:
+
+    C:\Users\dr\tmpdata\data>ogr2ogr -lco "OVERWRITE=YES" -nlt MULTIPOLYGON -f PostgreSQL PG:"host=localhost user=pguser password=topsecret dbname=dbfrecom" water-polygon.shp
+    C:\Users\dr\tmpdata\data>ogr2ogr -lco "OVERWRITE=YES" -nlt MULTIPOLYGON -f PostgreSQL PG:"host=localhost user=pguser password=topsecret dbname=dbfrecom" building-polygon.shp
+    C:\Users\dr\tmpdata\data>ogr2ogr -lco "OVERWRITE=YES" -nlt MULTILINESTRING -f PostgreSQL PG:"host=localhost user=pguser password=topsecret dbname=dbfrecom" highway-line.shp
+    C:\Users\dr\tmpdata\data>ogr2ogr -lco "OVERWRITE=YES" -f PostgreSQL PG:"host=localhost user=pguser password=topsecret dbname=dbfrecom" railway-station-point.shp
+
+Открываем pgAdmin, перходим в базу данных `dbfrecom` и видим, что появилось
+4 новых таблицы: помимо служебной `spatial_ref_sys` - это соответственно
+`water_polygon`, `building_polygon`, `highway_line` и `railway_station_point`.
+
+Открываем окно редактора SQL и выполняем команду:
+
+    SELECT ST_AsText(wkb_geometry) from building_polygon LIMIT 10;
+
+В результате которой будет получено WKT представление 10 произвольных
+геометрий (название поля, содержащего геометрию можно задавать
+при загрузке данных, по умолчанию - `wkb_geometry`).
+
+</xmp>
+<script src="../strapdown/v/0.1/strapdown.js"></script>
+</html>

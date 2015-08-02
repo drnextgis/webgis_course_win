@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Установка PostGIS в Windows 7</title>
+
+<xmp theme="united" style="display:none;">
+Установка PostGIS
+-----------------
+
+![][01-postgis-08]
+
+При установке PostgreSQL было также установлено приложение
+Stack Builder, с помощью которого можно установить PostGIS.
+Последняя версия, доступная через Stack Builder - PostGIS 2.1.7.
+Запускаем *Пуск &#10139; Все программы &#10139; Application Stack Builder*.
+В открывшемся окне выбираем наш сервер, а в следующем отмечаем
+приложение PostGIS 2.1 Bundle for PostgreSQL 9.4. В окне
+инсталлятора PostGIS пункт `Create spatial database` отмечать не нужно.
+В окне с выбором пути установки в случае, если кнопка `Next` не активна,
+поменяйте слэши на обратные.
+
+
+Добавление функций PostGIS в базу данных
+----------------------------------------
+
+Чтобы внутри базы данных были доступны функции PostGIS, их необходимо туда
+загрузить. Делаем это от имени пользователя `postgres` (у пользователя
+`pguser` на выполнение данных инструкций недостаточно прав).
+Начиная с версии Postgres 9.1 PostGIS может быть установлен с помощью
+механизма **CREATE EXTENSION**:
+
+    C:\Users\dr>psql -U postgres -d dbfrecom -c "CREATE EXTENSION postgis;"
+    Password for user postgres:
+    CREATE EXTENSION
+
+Сделаем пользователя владельцем служебных таблиц, созданных при установке PostGIS:
+
+    C:\Users\dr>psql -U postgres -d dbfrecom -c "ALTER TABLE geometry_columns OWNER TO pguser;"
+    Password for user postgres:
+    ALTER TABLE
+
+    C:\Users\dr>psql -U postgres -d dbfrecom -c "ALTER TABLE spatial_ref_sys OWNER TO pguser;"
+    Password for user postgres:
+    ALTER TABLE
+
+    C:\Users\dr>psql -U postgres -d dbfrecom -c "ALTER TABLE geography_columns OWNER TO pguser;"
+    Password for user postgres:
+    ALTER TABLE
+
+Чтобы проверить, что PostGIS установился, выполним команду c локального хоста:
+
+    psql -U pguser -d dbfrecom -c "SELECT PostGIS_Full_Version();"
+
+В результате чего должен быть получен ответ вида:
+
+    POSTGIS="2.1.7 r13414" GEOS="3.4.2-CAPI-1.8.2 r3922" PROJ="Rel. 4.8.0, 6 March 2012" GDAL="GDAL 1.11.1, released 2014/09/24 GDAL_DATA not found" LIBXML="2.7.8" LIBJSON="UNKNOWN" RASTER
+    (1 row)
+
+[01-postgis-08]: ../img/01-postgis-08.png
+
+</xmp>
+
+<script src="../strapdown/v/0.1/strapdown.js"></script>
+</html>

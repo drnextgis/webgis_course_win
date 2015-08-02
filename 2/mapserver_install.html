@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Установка MapServer в Windows 7</title>
+
+<xmp theme="united" style="display:none;">
+
+![][02-mapserver-01]
+
+Установка Web-сервера Apache
+----------------------------
+
+Для установки Web-сервера Apache запустите инсталлятор OSGeo4W
+и установите пакет *Web &#10139; apache*.
+
+Чтобы убедиться в том, что Apache установился корректно, перейдите в браузере
+по адресу `http://IP-адрес Web-сервера`. Дожна отобразиться страница
+следующего содержания:
+
+![][02-mapserver-02]
+
+Установка MapServer
+-------------------
+
+Аналогично, используя инсталлятор OSGeo4W, установите пакет
+*Web &#10139; mapserver-dev*. После чего скопируйте файл
+*mapserver.exe* в нужное место:
+
+    cp C:\OSGeo4W\bin\mapserv.exe C:\OSGeo4W\apache\cgi-bin\
+
+Чтобы убедиться в том, что MapServer установился корректно, перейдите в браузере
+по адресу `http://IP-адрес Web-сервера/cgi-bin/mapserv`. Должна отобразиться
+страница, содержащая следующий текст:
+
+    No query information to decode. QUERY_STRING is set, but empty.
+
+[02-mapserver-01]: ../img/02-mapserver-01.png
+[02-mapserver-02]: ../img/02-mapserver-02.png
+
+</xmp>
+
+<script src="../strapdown/v/0.1/strapdown.js"></script>
+</html>

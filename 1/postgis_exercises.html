@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Примеры пространственных запросов</title>
+
+<xmp theme="united" style="display:none;">
+
+**1. Поиск здания по координатам**
+
+    SELECT * FROM building_polygon WHERE ST_Contains(wkb_geometry, ST_SetSRID(ST_Point(37.565873, 55.727941), 4326));
+
+**2. Поиск ближайших станций метро**
+
+    SELECT name, ST_Distance(ST_Transform(wkb_geometry, 32637), ST_Transform(ST_SetSRID(ST_Point(37.565873, 55.727941), 4326), 32637)) distance
+    FROM railway_station_point
+    ORDER BY distance ASC LIMIT 10;
+
+**3. Поиск ближайших посольств**
+
+    SELECT a_strt, a_hsnmbr, name FROM building_polygon
+    WHERE ST_Intersects(ST_Transform(wkb_geometry, 32637),
+                        ST_Buffer(ST_Transform(ST_SetSRID(ST_Point(37.565873, 55.727941), 4326), 32637), 500))
+    AND name ILIKE '%посольство%';
+
+Измените размер буфера и пронаблюдайте за тем, как изменится
+результат.
+
+</xmp>
+<script src="../strapdown/v/0.1/strapdown.js"></script>
+</html>
