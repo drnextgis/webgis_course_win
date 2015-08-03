@@ -77,32 +77,7 @@ Visual C++ Redistributable for Visual Studio 2015 по [ссылке](http://www
 Публикация проекта
 ------------------
 
-1. На сервере переходим в каталог */usr/lib/cgi-bin*, создаём в нём
-   ещё один каталог *vega*, и делаем необходимый симлинк:
-
-       cd /usr/lib/cgi-bin
-       sudo mkdir vega
-       cd vega
-       sudo ln -s ../qgis_mapserv.fcgi .
-
-2. Копируем файл *qgis-mapserver-1.8.qgs* в директорию */usr/lib/cgi-bin/vega*;
-
-3. Перезапускаем Apache:
-
-       sudo service apache2 restart
-
-4. В QGIS создаём подключение к WMS-серверу `http://10.22.0.9/cgi-bin/vega/qgis_mapserv.fcgi`,
-   при этом отмечаем пункты *Игнорировать URI запроса GetMap* и *Игнорировать
-   URI запроса GetFeatureInfo*:
-
-   ![][02-qgis-mapserver-02]
-
-5. Подключаемся к созданному подключению и добавляем на карту WMS-слои, убеждаясь в
-   том, что они имеют такое же оформление, как и в проекте QGIS.
-
-[02-qgis-mapserver-01]: ../img/02-qgis-mapserver-01.png
-[02-qgis-mapserver-02]: ../img/02-qgis-mapserver-02.png
-
+    http://localhost/qgis/qgis_mapserv.fcgi.exe
 
 QGIS Mapserver развивается очень стремительно и в последних версиях реализована
 поддержка в том числе и WFS.
