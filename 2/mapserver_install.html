@@ -25,11 +25,44 @@
 Аналогично, используя инсталлятор OSGeo4W, установите пакет
 *Web &#10139; mapserver-dev*.
 
+
+Для x64 в инсталляторе OSGeo4W нет Apache, поэтому воспользуемся, например,
+[XAMPP](https://www.apachefriends.org/ru/index.html) (нужен только Apache,
+остальные продукты можно не устанавливать).
+
+После того, как Apache был установлен, откройте файл
+*C:\xampp\apache\conf\httpd.conf* и замените строку
+    
+    ScriptAlias /cgi-bin/ "C:/xampp/cgi-bin/"
+
+на
+
+    ScriptAlias /cgi-bin/ "C:/OSGeo4W64/bin/"
+
+(или другую, в которой расположен файл *mapserv.exe*).
+
+Также измените секцию:
+
+    <Directory "C:/xampp/cgi-bin">
+        AllowOverride All
+        Options None
+        Require all granted
+    </Directory>
+
+на
+
+    <Directory "C:/OSGeo4W64/bin">
+        AllowOverride All
+        Options None
+        Require all granted
+    </Directory>
+
 Чтобы убедиться в том, что MapServer установился корректно, перейдите в браузере
-по адресу `http://IP-адрес Web-сервера/cgi-bin/mapserv`. Должна отобразиться
+по адресу `http://IP-адрес Web-сервера/cgi-bin/mapserv.exe`. Должна отобразиться
 страница, содержащая следующий текст:
 
     No query information to decode. QUERY_STRING is set, but empty.
+
 
 [02-mapserver-01]: ../img/02-mapserver-01.png
 [02-mapserver-02]: ../img/02-mapserver-02.png
