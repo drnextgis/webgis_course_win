@@ -10,7 +10,7 @@
 
 Основные характеристики QGIS Mapserver:
 
-* открытый (GPL) WMS-сервер;
+* открытый (GPL) WMS/WFS-сервер;
 * представляет собой FastCGI/CGI приложение, написанное на C++;
 * позволяет публиковать как векторные, так и растровые данные;
 * управление символикой из настольного клиента QGIS.
@@ -18,18 +18,35 @@
 Установка QGIS Mapserver
 ------------------------
 
-Для установки QGIS Mapserver установим следующие пакеты:
+Для установки QGIS Mapserver сначала поставим модуль
+*mod_fcgid* Apache со страницы [Apache Lounge](http://www.apachelounge.com/download/)
+(*win32, по версии Apache). Так же установите
+Visual C++ Redistributable for Visual Studio 2015 по [ссылке](http://www.microsoft.com/en-us/download/details.aspx?id=48145). 
+Переместите файл *mod_fcgid.so*
+в *C:\xampp\apache\modules* а в конфиг добавьте:
 
-     sudo aptitude install qgis-mapserver libapache2-mod-fcgid
+    LoadModule fcgid_module modules/mod_fcgid.so
 
-И перезапустим Apache:
+и (поменяв пути на свои):
 
-    sudo service apache2 restart
+    <IfModule fcgid_module>
+        DefaultInitEnv PATH "C:\OSGeo4W\bin;C:\OSGeo4W\apps\qgis\bin;C:\OSGeo4W\apps\grass\grass-@grassversion@\bin;C:\OSGeo4W\apps\grass\grass-@grassversion@\lib;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem"
+        DefaultInitEnv QGIS_PREFIX_PATH "C:\OSGeo4W\apps\qgis"
+        DefaultInitEnv QT_PLUGIN_PATH "C:\OSGeo4W\apps\qgis\qtplugins;C:\OSGeo4W\apps\qt4\plugins"
+        DefaultInitEnv TEMP "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp"
+        
+        Alias /qgis/ C:\OSGeo4W/apps/qgis/bin/
+        <Directory "C:\OSGeo4W/apps/qgis/bin/">
+            SetHandler fcgid-script
+            Options ExecCGI
+            Require all granted
+        </Directory>
+    </IfModule>
 
 Чтобы проверить, что QGIS Mapserver установился корректно, откроем в
 браузере следующую страницу:
 
-    http://10.22.0.9/cgi-bin/qgis_mapserv.fcgi?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
+    http://localhost:81/qgis/qgis_mapserv.fcgi.exe?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities
 
 Если по указанному адресу открывается страница, представляющая собой
 ответ сервера GetCapabilities, значит QGIS Mapserver установился корректно.
