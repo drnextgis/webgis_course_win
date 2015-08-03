@@ -19,13 +19,6 @@
 
 ![][02-mapserver-02]
 
-Установка MapServer
--------------------
-
-Аналогично, используя инсталлятор OSGeo4W, установите пакет
-*Web &#10139; mapserver-dev*.
-
-
 Для x64 в инсталляторе OSGeo4W нет Apache, поэтому воспользуемся, например,
 [XAMPP](https://www.apachefriends.org/ru/index.html) (нужен только Apache,
 остальные продукты можно не устанавливать).
@@ -56,6 +49,12 @@
         Options None
         Require all granted
     </Directory>
+
+Установка MapServer
+-------------------
+
+Используя инсталлятор OSGeo4W, установите пакет
+*Web &#10139; mapserver-dev*.
 
 Чтобы убедиться в том, что MapServer установился корректно, перейдите в браузере
 по адресу `http://IP-адрес Web-сервера/cgi-bin/mapserv.exe`. Должна отобразиться
