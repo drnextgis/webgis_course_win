@@ -9,12 +9,10 @@
 --------------------------
 
 Для установки Python [MapScript](http://mapserver.org/mapscript/index.html)
-API выполните следующую команду:
-
-    sudo aptitude install python-mapscript
+API воспользуемся инсталлером OSGeo4W и установим пакет *Web &#10139; mapscript-python-dev*.
 
 Чтобы убедиться в том, что MapScript установлен корректно, выполните
-команду:
+команду (в OSGeo4W Shell):
 
     python -c "import mapscript"
 
@@ -23,6 +21,26 @@ API выполните следующую команду:
 
 Cоздание враппера c использования MapScript
 -------------------------------------------
+
+Создание простого CGI файла на Python
+-------------------------------------
+
+Если данный пункт не работает, то переходить к следующему
+смысла нет.
+
+В директории *C:/OSGeo4W64/bin* создайте файл *test.py*
+следующего содержания:
+
+    #!C:\OSGeo4W\bin\python.exe
+    print("""Content-Type: text/plain
+
+    Hello, world!""")
+
+Откройте в браузере URL `http://localhost/cgi-bin/test.py`,
+вы должны увидеть текст *Hello, world!*.
+
+Работа с MapScript
+------------------
 
 Сфера применения MapScript очень широка. Можно, например, в соответствии
 с переданными клиентом параметрами HTTP запроса генерировать каждый
@@ -33,8 +51,8 @@ WMS(WFS) запросов.
 
 В настоящий момент времени адреса веб сервисов имеют вид:
 
-    http://10.22.0.9/cgi-bin/mapserv?map=/home/rykovd/wms/wms.map&
-    http://10.22.0.9/cgi-bin/mapserv?map=/home/rykovd/wfs/wfs.map&
+    http://localhost/cgi-bin/mapserv.exe?map=C:/Users/dr/mapserver/wfs.map&
+    http://localhost/cgi-bin/mapserv.exe?map=C:/Users/dr/mapserver/wms.map&
 
 Как вы можете заметить, в этом случае адрес получается довольно
 длинным, да и к тому же указывается путь до map-файла
@@ -44,34 +62,44 @@ WMS(WFS) запросов.
 множество [способов](http://mapserver.org/ogc/wms_server.html#changing-the-online-resource-url),
 рассмотрим один из них.
 
-Переходим в каталог */usr/lib/cgi-bin* и создаём 2 файла *wms* и *wfs*:
+Прежде всего убедитесь в том, что *mapscript* корректно запускается
+из стандартной консоли при задании нужных переменных окружения
+`PYTHONPATH` и `PATH`:
 
-    cd /usr/lib/cgi-bin
-    sudo touch wms
-    sudo touch wfs
+    set PYTHONPATH=C:\OSGeo4W64\apps\python27\lib\site-packages
+    set PATH=C:\OSGeo4W\bin
+
+После чего запустите Python и убедитесь в том, что
+*mapscript* импортируется без ошибок:
+
+    >C:\OSGeo4W\bin\python
+    >>>import mapscript
+
+В случае успеха добавьте в конфиг Apache *httpd.conf*
+следующие строки:
+
+    SetEnv PYTHONPATH C:\OSGeo4W64\apps\python27\lib\site-packages
+    SetEnv PATH C:\OSGeo4W64\bin
+
+Переходим в каталог *C:/OSGeo4W64/bin* и создаём 2 файла *wms* и *wfs*.
 
 В каждый файл помещаем следующий код. Для *wms*:
 
-    #!/usr/bin/python
+    #!C:\OSGeo4W64\bin\python.exe
     import mapscript
     req = mapscript.OWSRequest()
     req.loadParams()
-    map = mapscript.mapObj('/home/rykovd/wms/wms.map')
+    map = mapscript.mapObj('C:/Users/dr/mapserver/wms.map')
     map.OWSDispatch(req)
 
 Для *wfs*:
 
-    #!/usr/bin/python
+    #!C:\OSGeo4W64\bin\python.exe
     import mapscript
     req = mapscript.OWSRequest()
     req.loadParams()
-    map = mapscript.mapObj('/home/rykovd/wfs/wfs.map')
+    map = mapscript.mapObj('C:/Users/dr/mapserver/wfs.map')
     map.OWSDispatch(req)
-
-Делаем их исполняемыми:
-
-    sudo chmod o+x wms
-    sudo chmod o+x wfs
 
 Затем в файлах *wms.map* и *wfs.map* изменим значение **wms_onlineresource**
 и **wfs_onlineresource** на:
