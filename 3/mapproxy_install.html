@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<title>Установка MapProxy в Windows</title>
+
+<xmp theme="united" style="display:none;">
+
+Кэширующий тайловый сервер MapProxy
+-----------------------------------
+
+![][03-mapproxy-01]
+
+[03-mapproxy-01]: ../img/03-mapproxy-01.png
+
+**Особенности:**
+
+* Библиотека на Python
+* Конфигурируется файлом **YAML**
+* Форматы источников: **WMS**, **TMS**, **Mapnik**, **MapServer**
+* Форматы сервисов: **WMS**, **WMTS**, **TMS**, **KML Superoverlay**
+* Форматы хранения данных: **файлы (TMS)**, **mbtiles**, **couchdb**
+
+Установка MapProxy
+------------------
+
+В OSGeo4W установите *PIL* и *Shapely*. Затем:
+
+    curl --insecure https://raw.githubusercontent.com/pypa/pip/master/contrib/get-pip.py | python
+    pip install MapProxy
+
+Чтобы убедиться, что MapProxy установился корректно, выполните команду:
+
+    mapproxy-util --version
+
+Должна отобразиться версия MapProxy:
+
+    Mapproxy 1.8.0
+
+Создание файлов настройки
+-------------------------
+
+Выполните команду:
+
+    mapproxy-util create -t base-config mymapproxy
+
+В вашем домашнем каталоге будет создан каталог **mymapproxy**
+с примерами конфигурационных файлов **mapproxy.yaml** и **seed.yaml**.
+
+Запуск тестового сервера
+------------------------
+
+    cd mymapproxy
+    mapproxy-util serve-develop -b 0.0.0.0 mapproxy.yaml
+
+Запустится сервер, публикующий данные с Omniscale OpenStreetMap WMS.
+В MapProxy входит служебный сервис `demo`, позволяющий просматривать
+список всех опубликованных WMS и TMS слоёв. Доступ к нему
+можно получить перейдя по адресу:
+
+    http://localhost:8080/demo
+
+</xmp>
+<script src="../strapdown/v/0.1/strapdown.js"></script>
+</html>
