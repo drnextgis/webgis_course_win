@@ -84,7 +84,10 @@ function init() {
       {
           title: "Draw Feature",
           displayClass: "olControlDrawFeaturePolygon",
-          multi: false
+          multi: false,
+          featureAdded: function(feature) {
+              feature.attributes["name"] = "FRECOM WFST"
+          }
       }
   );
   var edit = new OpenLayers.Control.ModifyFeature(wfs, {
