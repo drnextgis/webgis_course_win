@@ -1,7 +1,7 @@
 Курс Веб ГИС для начинающих
 ===========================
 
-http://nextgis.github.io/webgis_course_win/
+http://drnextgis.github.io/webgis_course_win/
 
 1. Архитектура приложений Веб ГИС, способы хранения данных
 2. OGC Web Services
